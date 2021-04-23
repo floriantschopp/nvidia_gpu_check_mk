@@ -1,0 +1,12 @@
+#!/usr/bin/env/python
+# -*- encoding: utf-8; py-indent-offset: 4 -*-
+
+def bake_nvidia_gpu(opsys, conf, conf_dir, plugins_dir):
+    shutil.copy2(cmk.utils.paths.local_agents_dir + "/plugins/nvidia_gpu", plugins_dir + "/nvidia_gpu")
+
+bakery_info["nvidia_gpu"] = {
+    "bake_function" : bake_nvidia_gpu,
+    "os"            : [ "linux", ],
+    "matchtype"     : "all",
+}
+

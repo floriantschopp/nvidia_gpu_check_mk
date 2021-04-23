@@ -1,0 +1,103 @@
+#!/usr/bin/python
+# -*- encoding: utf-8; py-indent-offset: 4 -*-
+
+nvidia_gpu_util_default_values = (101,101)
+def inventory_nvidia_gpu_util(info):
+    for line in info:
+        gpu = line[0]
+        field = line[1]
+        if field == "GPU_util":
+            yield gpu, "nvidia_gpu_util_default_values"
+def check_nvidia_gpu_util(item, params, info):
+    warn, crit = params
+    for line in info:
+        if line[0] == item and line[1] == "GPU_util":
+            value = int(line[2])
+            perfdata = [ ( "GPU_util", value, warn, crit ) ]
+            if value > crit:
+                return (2, "CRIT - %d%%" % value, perfdata)
+            if value > warn:
+                return (1, "WARN - %d%%" % value, perfdata)
+            else:
+                return (0, "OK - %d%%" % value, perfdata)
+    return (3, "UNKNOWN - %s not found in agent output" % item)
+check_info['nvidia_gpu.util'] = {'check_function':  check_nvidia_gpu_util, 
+        'inventory_function': inventory_nvidia_gpu_util, 
+        'service_description': "gpu:%s GPU Utilization", 
+        'has_perfdata': True,
+}
+
+
+def inventory_nvidia_gpu_memused(info):
+    for line in info:
+        gpu = line[0]
+        field = line[1]
+        if field == "memory_used":
+            yield gpu, None
+def check_nvidia_gpu_memused(item, params, info):
+    for line in info:
+        if line[0] == item and line[1] == "memory_used":
+            value = int(line[2])
+            perfdata = [ ( "memused", value*1024*1024 ) ]
+            return (0, "OK - %d MB used" % value, perfdata)
+    return (3, "UNKNOWN - %s not found in agent output" % item)
+check_info['nvidia_gpu.memused'] = {'check_function':  check_nvidia_gpu_memused, 
+        'inventory_function': inventory_nvidia_gpu_memused, 
+        'service_description': "gpu:%s GPU Memory Usage", 
+        'has_perfdata': True,
+}
+
+
+nvidia_gpu_memutil_default_values = (101,101)
+def inventory_nvidia_gpu_memutil(info):
+    for line in info:
+        gpu = line[0]
+        field = line[1]
+        if field == "memory_util":
+            yield gpu, "nvidia_gpu_memutil_default_values"
+
+def check_nvidia_gpu_memutil(item, params, info):
+    warn, crit = params
+    for line in info:
+        if line[0] == item and line[1] == "memory_util":
+            value = int(line[2])
+            perfdata = [ ( "memutil", value, warn, crit ) ]
+            if value > crit:
+                return (2, "CRIT - %d%%" % value, perfdata)
+            if value > warn:
+                return (1, "WARN - %d%%" % value, perfdata)
+            else: 
+                return (0, "OK - %d%%" % value, perfdata)
+    return (3, "UNKNOWN - %s not found in agent output" % item)
+check_info['nvidia_gpu.memutil'] = {'check_function':  check_nvidia_gpu_memutil, 
+        'inventory_function': inventory_nvidia_gpu_memutil, 
+        'service_description': "gpu:%s GPU Memory Utilization", 
+        'has_perfdata': True,
+}
+
+
+nvidia_gpu_temp_default_values = (88,95)
+def inventory_nvidia_gpu_temp(info):
+    for line in info:
+        gpu = line[0]
+        field = line[1]
+        if field == "temperature":
+            yield gpu, "nvidia_gpu_temp_default_values"
+def check_nvidia_gpu_temp(item, params, info):
+    warn, crit = params
+    for line in info:
+        if line[0] == item and line[1] == "temperature":
+            value = int(line[2])
+            perfdata = [ ( "temperature", value, warn, crit ) ]
+            if value > crit:
+                return (2, "CRIT - %d C" % value, perfdata)
+            if value > warn:
+                return (1, "WARN - %d C" % value, perfdata)
+            else:
+                return (0, "OK - %d C" % value, perfdata)
+    return (3, "UNKNOWN - %s not found in agent output" % item)
+check_info['nvidia_gpu.temp'] = {'check_function':  check_nvidia_gpu_temp, 
+        'inventory_function': inventory_nvidia_gpu_temp, 
+        'service_description': "gpu:%s GPU Temperature", 
+        'has_perfdata': True,
+}
